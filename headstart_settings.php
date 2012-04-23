@@ -10,12 +10,12 @@ function headstart_settings_page_setup() {
 	global $headstart;
 
 	$headstart -> select1 = array(
-		'key1' => 'value1',
-		'key2' => 'value2'
+		'key1' => __( 'value1', 'headstart' ),
+		'key2' => __( 'value2', 'headstart' )
 	);
 
 	/* add_options_page( $page_title, $menu_title, $capability, $menu_slug, $funtion ); */
-	$headstart -> settings_page = add_options_page( 'Headstart Settings', 'Headstart', 'manage_options', 'headstart-settings-page', 'headstart_display_settings_page' );
+	$headstart -> settings_page = add_options_page( __( 'Headstart Settings', 'headstart' ), __( 'Headstart', 'headstart' ), 'manage_options', 'headstart-settings-page', 'headstart_display_settings_page' );
 
 	add_action( 'admin_init', 'headstart_register_settings' );
 
@@ -52,12 +52,13 @@ function headstart_create_setting($args = array(), $before = '<p>', $after = '</
 
 	$field_value = headstart_get_option( $id );
 	$prefix = 'headstart_settings';
+	$setting_id = "$prefix[$id]";
 
 	$html = $before . "\n";
 
 	switch ($type) {
-		case 'text':
-			$html .= "\t" . '<input type="text" id="' . $id . '" name="' . $prefix . '[' . $id . ']" ';
+		case 'text' :
+			$html .= "\t" . '<input type="text" id="' . $id . '" name="' . $setting_id . '" ';
 			if ( isset( $class ) )
 				$html .= 'class="' . $class . '" ';
 			$html .= 'value="' . esc_attr( $field_value ) . '" />' . "\n";
@@ -67,8 +68,8 @@ function headstart_create_setting($args = array(), $before = '<p>', $after = '</
 				$html .= '<span class="description">' . esc_attr( $desc ) . '</span>' . "\n";
 			break;
 
-		case 'checkbox':
-			$html .= "\t" . '<input type="checkbox" id="' . $id . '" name="' . $prefix . '[' . $id . ']" ';
+		case 'checkbox' :
+			$html .= "\t" . '<input type="checkbox" id="' . $id . '" name="' . $setting_id . '" ';
 			if ( isset( $class ) )
 				$html .= 'class="' . $class . '" ';
 			$html .= 'value="' . $value . '"' . checked( $value, $field_value, false ) . ' />' . "\n";
@@ -78,8 +79,8 @@ function headstart_create_setting($args = array(), $before = '<p>', $after = '</
 				$html .= '<span class="description">' . esc_attr( $desc ) . '</span>' . "\n";
 			break;
 
-		case 'select':
-			$html .= "\t" . '<select id="' . $id . '" name="' . $prefix . '[' . $id . ']"';
+		case 'select' :
+			$html .= "\t" . '<select id="' . $id . '" name="' . $setting_id . '"';
 			if ( isset( $class ) )
 				$html .= ' class="' . $class . '"';
 			$html .= '>';
@@ -93,7 +94,22 @@ function headstart_create_setting($args = array(), $before = '<p>', $after = '</
 				$html .= '<span class="description">' . esc_attr( $desc ) . '</span>' . "\n";
 			break;
 
-		default:
+		case 'textarea' :
+			if ( isset( $label ) )
+				$html .= "\t" . '<label for="' . $id . '">' . $label . '</label>' . "\n";
+			$html .= "\t" . '<textarea id="' . $id . '" name="' . $setting_id . '" ';
+			if ( isset( $class ) )
+				$html .= 'class="' . $class . '" ';
+			if ( isset( $rows ) )
+				$html .= 'rows="' . $rows . '"';
+			if ( isset( $cols ) )
+				$html .= 'cols="' . $cols . '"';
+			$html .= '>' . esc_attr( $field_value ) . '</textarea>' . "\n";
+			if ( isset( $desc ) )
+				$html .= '<span class="description">' . esc_attr( $desc ) . '</span>' . "\n";
+			break;
+
+		default :
 			break;
 	}
 
@@ -128,13 +144,28 @@ function headstart_validate_settings($input) {
 
 	global $headstart;
 
+	$text_options = array(
+		'text1',
+		'text2'
+	);
+	foreach ( $text_options as $text_option ) {
+		$settings[$text_option] = trim( esc_attr( $input[$text_option] ) );
+	}
+
 	$integer_options = array(
 		'int1',
 		'int2'
 	);
-
 	foreach ( $integer_options as $integer_option ) {
 		$settings[$integer_option] = is_numeric( $input[$integer_option] ) ? intval( $input[$integer_option] ) : headstart_get_option( $integer_option );
+	}
+
+	$float_options = array(
+		'float1',
+		'float2'
+	);
+	foreach ( $float_options as $float_option ) {
+		$settings[$float_option] = is_numeric( $input[$float_option] ) ? round( $input[$float_option], 2 ) : headstart_get_option( $float_option );
 	}
 
 	$checkbox_options = array(

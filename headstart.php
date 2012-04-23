@@ -44,7 +44,8 @@ class HeadStart {
                 'headstart_deactivate_plugin'
             ) );
         }
-
+		
+		load_plugin_textdomain( 'headstart', false, PRETTYPHOTO_DIR . 'languages/' );
     }
 
     function headstart_plugin_action_links($links, $file) {

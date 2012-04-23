@@ -4,7 +4,7 @@ Donate link: http://binaryhideout.com/
 Tags: plugin, template
 Requires at least: 3.3
 Tested up to: 3.4-nightly
-Stable tag: 1.0
+Stable tag: trunk
 
 Here is a short description of the plugin.  This should be no more than 150 characters.  No markup here.
 
