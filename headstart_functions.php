@@ -20,23 +20,23 @@ function headstart_functions_setup() {
 function headstart_get_option($option) {
 	$settings = get_option( 'headstart_settings' );
 
+	if ( ! is_array( $settings ) || ! array_key_exists( $option, $settings ) )
+		return false;
+
 	return $settings[$option];
 }
 
 function headstart_update_settings() {
 
-	/* Get the settings from the database. */
 	$settings = get_option( 'headstart_settings' );
-	/* Get the default plugin settings. */
 	$default_settings = headstart_get_default_settings( );
-	/* Loop through each of the default plugin settings. */
+	$settings['version'] = HEADSTART_VERSION;
+
 	foreach ( $default_settings as $setting_key => $setting_value ) {
-		/* If the setting didn't previously exist, add the default value to the $settings array. */
 		if ( ! isset( $settings[$setting_key] ) )
 			$settings[$setting_key] = $setting_value;
 	}
-	$settings['version'] = HEADSTART_VERSION;
-	/* Update the plugin settings. */
+
 	update_option( 'headstart_settings', $settings );
 
 }
